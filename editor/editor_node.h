@@ -67,6 +67,7 @@ class DependencyErrorDialog;
 class DockSplitContainer;
 class DynamicFontImportSettingsDialog;
 class EditorAbout;
+class EditorAssetStateManager;
 class EditorBuildProfileManager;
 class EditorBottomPanel;
 class EditorCommandPalette;
@@ -403,6 +404,8 @@ private:
 	ConfirmationDialog *open_imported = nullptr;
 	Button *new_inherited_button = nullptr;
 	String open_import_request;
+
+	EditorAssetStateManager *editor_asset_state_manager = nullptr;
 
 	EditorDockManager *editor_dock_manager = nullptr;
 	Timer *editor_layout_save_delay_timer = nullptr;

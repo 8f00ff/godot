@@ -33,6 +33,7 @@
 #include "core/io/dir_access.h"
 #include "core/io/file_access.h"
 #include "core/io/zip_io.h"
+#include "editor/editor_asset_state_manager.h"
 #include "editor/editor_file_system.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -583,6 +584,16 @@ void EditorAssetInstaller::_install_asset() {
 	}
 
 	EditorFileSystem::get_singleton()->scan_changes();
+
+	Vector<String> installed_files;
+	for (const KeyValue<String, String>& E : mapped_files) {
+		if (!_is_item_checked(E.key) || E.value.ends_with("/")) {
+			continue;
+		}
+		installed_files.push_back(E.value);
+	}
+	
+	EditorAssetStateManager::get_singleton()->register_installed_asset(asset_id, asset_name, asset_version, target_dir_path, skip_toplevel, installed_files);
 }
 
 void EditorAssetInstaller::set_asset_name(const String &p_asset_name) {
@@ -591,6 +602,22 @@ void EditorAssetInstaller::set_asset_name(const String &p_asset_name) {
 
 String EditorAssetInstaller::get_asset_name() const {
 	return asset_name;
+}
+
+void EditorAssetInstaller::set_asset_version(const int &p_asset_version) {
+	asset_version = p_asset_version;
+}
+
+int EditorAssetInstaller::get_asset_version() const {
+	return asset_version;
+}
+
+void EditorAssetInstaller::set_asset_id(const int &p_asset_id) {
+	asset_id = p_asset_id;
+}
+
+int EditorAssetInstaller::get_asset_id() const {
+	return asset_id;
 }
 
 void EditorAssetInstaller::_notification(int p_what) {

@@ -108,6 +108,7 @@ class EditorAssetLibraryItemDescription : public ConfirmationDialog {
 	int asset_id = 0;
 	String download_url;
 	String title;
+	int version = 0;
 	String sha256;
 	Ref<Texture2D> icon;
 
@@ -123,6 +124,7 @@ public:
 	void add_preview(int p_id, bool p_video, const String &p_url);
 
 	String get_title() { return title; }
+	int get_version() { return version; }
 	Ref<Texture2D> get_preview_icon() { return icon; }
 	String get_download_url() { return download_url; }
 	int get_asset_id() { return asset_id; }
@@ -151,6 +153,8 @@ class EditorAssetLibraryItemDownload : public MarginContainer {
 
 	int asset_id = 0;
 
+	int version = 0;
+
 	bool external_install;
 
 	EditorAssetInstaller *asset_installer = nullptr;
@@ -166,7 +170,7 @@ protected:
 public:
 	void set_external_install(bool p_enable) { external_install = p_enable; }
 	int get_asset_id() { return asset_id; }
-	void configure(const String &p_title, int p_asset_id, const Ref<Texture2D> &p_preview, const String &p_download_url, const String &p_sha256_hash);
+	void configure(const String &p_title, const int &p_version, int p_asset_id, const Ref<Texture2D> &p_preview, const String &p_download_url, const String &p_sha256_hash);
 
 	bool can_install() const;
 	void install();

@@ -77,6 +77,7 @@
 #include "editor/debugger/script_editor_debugger.h"
 #include "editor/dependency_editor.h"
 #include "editor/editor_about.h"
+#include "editor/editor_asset_state_manager.h"
 #include "editor/editor_audio_buses.h"
 #include "editor/editor_build_profile.h"
 #include "editor/editor_command_palette.h"
@@ -7224,6 +7225,8 @@ EditorNode::EditorNode() {
 	dock_slot[EditorDockManager::DOCK_SLOT_RIGHT_BR]->set_name("DockSlotRightBR");
 	right_r_vsplit->add_child(dock_slot[EditorDockManager::DOCK_SLOT_RIGHT_BR]);
 
+	editor_asset_state_manager = memnew(EditorAssetStateManager);
+
 	editor_dock_manager = memnew(EditorDockManager);
 
 	// Save the splits for easier access.
@@ -8140,6 +8143,7 @@ EditorNode::~EditorNode() {
 	memdelete(progress_hb);
 	memdelete(surface_upgrade_tool);
 	memdelete(uid_upgrade_tool);
+	memdelete(editor_asset_state_manager);
 	memdelete(editor_dock_manager);
 
 	EditorSettings::destroy();

@@ -276,6 +276,7 @@ void EditorAssetLibraryItemDescription::_preview_click(int p_id) {
 void EditorAssetLibraryItemDescription::configure(const String &p_title, int p_asset_id, const String &p_category, int p_category_id, const String &p_author, int p_author_id, const String &p_cost, int p_version, const String &p_version_string, const String &p_description, const String &p_download_url, const String &p_browse_url, const String &p_sha256_hash) {
 	asset_id = p_asset_id;
 	title = p_title;
+	version = p_version;
 	download_url = p_download_url;
 	sha256 = p_sha256_hash;
 	item->configure(p_title, p_asset_id, p_category, p_category_id, p_author, p_author_id, p_cost);
@@ -442,10 +443,11 @@ void EditorAssetLibraryItemDownload::_http_download_completed(int p_status, int 
 	install();
 }
 
-void EditorAssetLibraryItemDownload::configure(const String &p_title, int p_asset_id, const Ref<Texture2D> &p_preview, const String &p_download_url, const String &p_sha256_hash) {
+void EditorAssetLibraryItemDownload::configure(const String &p_title, const int &p_version, int p_asset_id, const Ref<Texture2D> &p_preview, const String &p_download_url, const String &p_sha256_hash) {
 	title->set_text(p_title);
 	icon->set_texture(p_preview);
 	asset_id = p_asset_id;
+	version = p_version;
 	if (p_preview.is_null()) {
 		icon->set_texture(get_editor_theme_icon(SNAME("FileBrokenBigThumb")));
 	}
@@ -533,6 +535,8 @@ void EditorAssetLibraryItemDownload::install() {
 	}
 
 	asset_installer->set_asset_name(title->get_text());
+	asset_installer->set_asset_version(version);
+	asset_installer->set_asset_id(asset_id);
 	asset_installer->open_asset(file, true);
 }
 
@@ -741,7 +745,7 @@ void EditorAssetLibrary::_install_asset() {
 
 	EditorAssetLibraryItemDownload *download = memnew(EditorAssetLibraryItemDownload);
 	downloads_hb->add_child(download);
-	download->configure(description->get_title(), description->get_asset_id(), description->get_preview_icon(), description->get_download_url(), description->get_sha256());
+	download->configure(description->get_title(), description->get_version(), description->get_asset_id(), description->get_preview_icon(), description->get_download_url(), description->get_sha256());
 
 	if (templates_only) {
 		download->set_external_install(true);

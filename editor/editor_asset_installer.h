@@ -55,6 +55,8 @@ class EditorAssetInstaller : public ConfirmationDialog {
 
 	String package_path;
 	String asset_name;
+	int asset_version = 0;
+	int asset_id = 0;
 	HashSet<String> asset_files;
 	HashMap<String, String> mapped_files;
 	HashMap<String, TreeItem *> file_item_map;
@@ -102,6 +104,12 @@ public:
 
 	void set_asset_name(const String &p_asset_name);
 	String get_asset_name() const;
+	
+	void set_asset_version(const int &p_asset_version);
+	int get_asset_version() const;
+
+	void set_asset_id(const int &p_asset_id);
+	int get_asset_id() const;
 
 	EditorAssetInstaller();
 };
