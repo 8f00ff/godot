@@ -1041,6 +1041,11 @@ msgstr ""
 msgid "%s (already exists)"
 msgstr "%s (deja există)"
 
+msgid "%d file conflicts with your project"
+msgid_plural "%d files conflict with your project"
+msgstr[0] "%d fișier intră în conflict cu proiectul tău"
+msgstr[1] "%d fișiere intră în conflict cu proiectul tău"
+
 msgid "Uncompressing Assets"
 msgstr "Decomprimare Asset-uri"
 

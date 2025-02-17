@@ -2045,9 +2045,9 @@ msgstr "開啟素材檔案「%s」時發生錯誤（非 ZIP 格式）。"
 msgid "%s (already exists)"
 msgstr "%s（已存在）"
 
-msgid "%d file conflicts with your project and won't be installed"
-msgid_plural "%d files conflict with your project and won't be installed"
-msgstr[0] "有%d個檔案與專案衝突，且不會被安裝"
+msgid "%d file conflicts with your project"
+msgid_plural "%d files conflict with your project"
+msgstr[0] "有%d個檔案與專案衝突"
 
 msgid "This asset doesn't have a root directory, so it can't be ignored."
 msgstr "這個素材沒有根目錄，所以無法被忽略。"

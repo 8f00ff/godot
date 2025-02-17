@@ -2075,9 +2075,9 @@ msgstr "\"%s\"에 대한 애셋 파일을 여는 중 오류 (ZIP 형식이 아�
 msgid "%s (already exists)"
 msgstr "%s (이미 있습니다)"
 
-msgid "%d file conflicts with your project and won't be installed"
-msgid_plural "%d files conflict with your project and won't be installed"
-msgstr[0] "%d개 파일이 프로젝트와 충돌하기 때문에 설치되지 않습니다"
+msgid "%d file conflicts with your project"
+msgid_plural "%d files conflict with your project"
+msgstr[0] "%d개 파일이 프로젝트와 충돌합니다"
 
 msgid "This asset doesn't have a root directory, so it can't be ignored."
 msgstr "이 에셋에는 루트 디렉터리가 없기 때문에 무시할 수 없습니다."

@@ -1487,9 +1487,9 @@ msgstr "ไลบรารี"
 msgid "Licenses"
 msgstr "สัญญาอนุญาต"
 
-msgid "%d file conflicts with your project and won't be installed"
-msgid_plural "%d files conflict with your project and won't be installed"
-msgstr[0] "ไฟล์ %d ไฟล์ขัดแย้งกับโครงการของคุณและจะไม่ได้รับการติดตั้ง"
+msgid "%d file conflicts with your project"
+msgid_plural "%d files conflict with your project"
+msgstr[0] "ไฟล์ %d ไฟล์ขัดแย้งกับโครงการของคุณ"
 
 msgid "This asset doesn't have a root directory, so it can't be ignored."
 msgstr "สินทรัพย์นี้ไม่มีไดเร็กทอรีรูท ดังนั้นจึงไม่สามารถละเลยได้"

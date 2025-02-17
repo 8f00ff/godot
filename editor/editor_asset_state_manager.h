@@ -34,6 +34,8 @@
 #include "core/object/object.h"
 #include "core/io/resource_uid.h"
 
+
+
 class EditorAssetStateManager : public Object {
 	GDCLASS(EditorAssetStateManager, Object);
 
@@ -44,9 +46,10 @@ class EditorAssetStateManager : public Object {
 protected:
 	static void _bind_methods();
 
-private:
+public:
+	static EditorAssetStateManager *get_singleton() { return singleton; }
+
 	struct AssetState {
-		int asset_id;
 		String asset_name;
 		int asset_version;
 		String install_folder;
@@ -54,19 +57,18 @@ private:
 		Vector<String> file_paths;
 	};
 
-	Vector<AssetState> asset_states;
-
 	AssetState* get_asset_state(int p_asset_id);
 
-public:
-	static EditorAssetStateManager *get_singleton() { return singleton; }
-
 	void register_installed_asset(int p_asset_id, const String &p_asset_name, const int &p_asset_version, const String &p_install_folder, const bool &p_skip_toplevel, const Vector<String> &p_file_paths);
+
 	void save_lock_file();
 	void load_lock_file();
 
 	EditorAssetStateManager();
 	~EditorAssetStateManager();
+
+private:
+	HashMap<int, AssetState> asset_states;
 };
 
 #endif // EDITOR_ASSET_STATE_MANAGER_H

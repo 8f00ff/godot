@@ -31,6 +31,7 @@
 #ifndef EDITOR_ASSET_INSTALLER_H
 #define EDITOR_ASSET_INSTALLER_H
 
+#include "editor/editor_asset_state_manager.h"
 #include "scene/gui/dialogs.h"
 #include "scene/gui/tree.h"
 
@@ -38,6 +39,7 @@ class CheckBox;
 class EditorFileDialog;
 class Label;
 class LinkButton;
+class EditorAssetStateManager;
 
 class EditorAssetInstaller : public ConfirmationDialog {
 	GDCLASS(EditorAssetInstaller, ConfirmationDialog);
@@ -60,6 +62,8 @@ class EditorAssetInstaller : public ConfirmationDialog {
 	HashSet<String> asset_files;
 	HashMap<String, String> mapped_files;
 	HashMap<String, TreeItem *> file_item_map;
+
+	EditorAssetStateManager::AssetState *asset_state;
 
 	TreeItem *first_file_conflict = nullptr;
 

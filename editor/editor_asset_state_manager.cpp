@@ -41,23 +41,23 @@ const char *EditorAssetStateManager::ADDONS_LOCK_PATH = "res://addons_lock.cfg";
 void EditorAssetStateManager::_bind_methods() {}
 
 EditorAssetStateManager::AssetState* EditorAssetStateManager::get_asset_state(int p_asset_id) {
-	for (AssetState &state : asset_states) {
-		if (state.asset_id == p_asset_id) {
-			return &state;
-		}
+	load_lock_file();
+
+	AssetState* state = asset_states.getptr(p_asset_id);
+	if (!state) {
+		return nullptr;
 	}
-	return nullptr;
+	return state;
 }
 
 void EditorAssetStateManager::register_installed_asset(int p_asset_id, const String &p_asset_name, const int &p_asset_version, const String &p_install_folder, const bool &p_skip_toplevel, const Vector<String> &p_file_paths) {
 	AssetState state;
-	state.asset_id = p_asset_id;
 	state.asset_name = p_asset_name;
 	state.asset_version = p_asset_version;
 	state.install_folder = p_install_folder;
 	state.skip_toplevel = p_skip_toplevel;
 	state.file_paths = p_file_paths;
-	asset_states.push_back(state);
+	asset_states[p_asset_id] = state;
 
 	save_lock_file();
 }
@@ -66,11 +66,13 @@ void EditorAssetStateManager::save_lock_file() {
 	Ref<ConfigFile> config;
 	config.instantiate();
 
-	for (const AssetState &state : asset_states) {
+	for (const KeyValue<int, AssetState>& E : asset_states) {
 		String section;
+		int asset_id = E.key;
+		AssetState state = E.value;
 
-		if (state.asset_id > 0) {
-			section = itos(state.asset_id);
+		if (asset_id > 0) {
+			section = itos(asset_id);
 		} else {
 			section = state.asset_name.get_file().get_basename();
 		}
@@ -109,10 +111,9 @@ void EditorAssetStateManager::load_lock_file() {
 			continue;
 		}
 
+		int asset_id = 0;
 		if (section.is_valid_int()) {
-			state.asset_id = section.to_int();
-		} else {
-			state.asset_id = 0;
+			asset_id = section.to_int();
 		}
 
 		state.asset_name = config->get_value(section, "asset_name");
@@ -120,7 +121,7 @@ void EditorAssetStateManager::load_lock_file() {
 		state.install_folder = config->get_value(section, "install_folder", "res://");
 		state.skip_toplevel = config->get_value(section, "skip_toplevel", true);
 		state.file_paths = config->get_value(section, "file_paths");
-		asset_states.push_back(state);
+		asset_states[asset_id] = state;
 	}
 }
 

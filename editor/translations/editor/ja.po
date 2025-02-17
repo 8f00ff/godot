@@ -2087,10 +2087,10 @@ msgstr "\"%s\" のアセットファイルを開けません (ZIP形式ではあ
 msgid "%s (already exists)"
 msgstr "%s (すでに存在する)"
 
-msgid "%d file conflicts with your project and won't be installed"
-msgid_plural "%d files conflict with your project and won't be installed"
+msgid "%d file conflicts with your project"
+msgid_plural "%d files conflict with your project"
 msgstr[0] ""
-"%d個のファイルがプロジェクトと競合しているため、インストールされません"
+"%d個のファイルがプロジェクトと競合しています"
 
 msgid "This asset doesn't have a root directory, so it can't be ignored."
 msgstr ""

@@ -2062,10 +2062,10 @@ msgstr "خطا در گشودن پروندهٔ دارایی برای «%s» (در
 msgid "%s (already exists)"
 msgstr "\"%s\" (در حال حاضر موجود است)"
 
-msgid "%d file conflicts with your project and won't be installed"
-msgid_plural "%d files conflict with your project and won't be installed"
-msgstr[0] "فایل %d با پروژه شما در مغایرت است و نصب نمی شود"
-msgstr[1] "فایل های %d با پروژه شما در مغایرت است و نصب نمی شود"
+msgid "%d file conflicts with your project"
+msgid_plural "%d files conflict with your project"
+msgstr[0] "فایل %d با پروژه شما در مغایرت است"
+msgstr[1] "فایل های %d با پروژه شما در مغایرت است"
 
 msgid "This asset doesn't have a root directory, so it can't be ignored."
 msgstr "این دارایی پوشه‌دان ریشه‌ای ندارد، پس نمی‌تواند نادیده گرفته شود."

@@ -2130,10 +2130,10 @@ msgstr "\"%s\" için varlık dosyası açılırken hata (dosya ZIP türünde de�
 msgid "%s (already exists)"
 msgstr "%s (zaten var)"
 
-msgid "%d file conflicts with your project and won't be installed"
-msgid_plural "%d files conflict with your project and won't be installed"
-msgstr[0] "%d dosya, projenizle çakışıyor ve kurulmayacak"
-msgstr[1] "%d dosya, projenizle çakışıyor ve kurulmayacaklar"
+msgid "%d file conflicts with your project"
+msgid_plural "%d files conflict with your project"
+msgstr[0] "%d dosya, projenizle çakışıyor"
+msgstr[1] "%d dosya, projenizle çakışıyor"
 
 msgid "This asset doesn't have a root directory, so it can't be ignored."
 msgstr "Bu varlığın bir kök klasörü yok, ve bunu yok sayamazsınız."

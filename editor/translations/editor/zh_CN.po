@@ -2084,9 +2084,9 @@ msgstr "打开“%s”的资产文件时出错（非 ZIP 格式）。"
 msgid "%s (already exists)"
 msgstr "%s（已存在）"
 
-msgid "%d file conflicts with your project and won't be installed"
-msgid_plural "%d files conflict with your project and won't be installed"
-msgstr[0] "有 %d 个文件与项目冲突，不会被安装"
+msgid "%d file conflicts with your project"
+msgid_plural "%d files conflict with your project"
+msgstr[0] "有 %d 个文件与项目冲突"
 
 msgid "This asset doesn't have a root directory, so it can't be ignored."
 msgstr "这个资产没有根目录，无法忽略。"

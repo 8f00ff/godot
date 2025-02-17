@@ -2220,11 +2220,11 @@ msgstr "Ошибка при открытии файла ассета «%s» (н�
 msgid "%s (already exists)"
 msgstr "%s (уже существует)"
 
-msgid "%d file conflicts with your project and won't be installed"
-msgid_plural "%d files conflict with your project and won't be installed"
-msgstr[0] "%d файл конфликтует с проектом и не будет установлен"
-msgstr[1] "%d файла конфликтуют с проектом и не будут установлены"
-msgstr[2] "%d файлов конфликтуют с проектом и не будут установлены"
+msgid "%d file conflicts with your project"
+msgid_plural "%d files conflict with your project"
+msgstr[0] "%d файл конфликтует с проектом"
+msgstr[1] "%d файла конфликтуют с проектом"
+msgstr[2] "%d файлов конфликтуют с проектом"
 
 msgid "This asset doesn't have a root directory, so it can't be ignored."
 msgstr ""

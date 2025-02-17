@@ -2036,9 +2036,9 @@ msgstr "Gagal saat membuka berkas aset untuk \"%s\" (tidak dalam format ZIP)."
 msgid "%s (already exists)"
 msgstr "%s (sudah ada)"
 
-msgid "%d file conflicts with your project and won't be installed"
-msgid_plural "%d files conflict with your project and won't be installed"
-msgstr[0] "%d file konflik denfan proyek anda dan tidak mau di pasang"
+msgid "%d file conflicts with your project"
+msgid_plural "%d files conflict with your project"
+msgstr[0] "%d file konflik dengan proyek anda"
 
 msgid "This asset doesn't have a root directory, so it can't be ignored."
 msgstr "Aset ini tidak memiliki folder akar, jadi tudak dapat di abaikan."

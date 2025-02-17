@@ -54,7 +54,44 @@ void EditorAssetInstaller::_item_checked_cbk() {
 
 	updating_source = true;
 	TreeItem *item = source_tree->get_edited();
-	item->propagate_check(0);
+
+	Dictionary meta = item->get_metadata(0);
+	bool is_dir = meta.get("is_dir", false);
+
+	bool all_checked = true;
+	bool all_unchecked = true;
+
+	if (is_dir) {
+		bool is_unchecked = meta.get("is_unchecked", false);
+		bool is_mixed = meta.get("is_mixed", false);
+
+		if (is_mixed && is_unchecked && item->is_checked(0) && !item->is_indeterminate(0)) {
+			TreeItem *child = item->get_first_child();
+			while (child) {
+				Dictionary child_meta = child->get_metadata(0);
+				bool child_conflict = child_meta.get("is_conflict", false);
+				bool child_modified = child_meta.get("is_modified", false);
+
+				bool child_set_checked = !child_conflict && !child_modified;
+
+				all_checked &= child_set_checked;
+				all_unchecked &= !child_set_checked;
+
+				child->set_checked(0, child_set_checked);
+				child = child->get_next();
+			}
+
+			item->set_indeterminate(0, !all_checked && !all_unchecked);
+		} else {
+			item->propagate_check(0);
+		}
+
+		meta["is_unchecked"] = !item->is_checked(0) && !item->is_indeterminate(0);
+		item->set_metadata(0, meta);
+	} else {
+		item->propagate_check(0);
+	}
+
 	_fix_conflicted_indeterminate_state(source_tree->get_root(), 0);
 	_update_confirm_button();
 	_rebuild_destination_tree();
@@ -68,37 +105,57 @@ bool EditorAssetInstaller::_fix_conflicted_indeterminate_state(TreeItem *p_item,
 	}
 	bool all_non_conflict_checked = true;
 	bool all_non_conflict_unchecked = true;
+	bool has_new_child = false;
 	bool has_conflict_child = false;
+	bool has_installed_child = false;
+	bool has_modified_child = false;
 	bool has_indeterminate_child = false;
 	TreeItem *child_item = p_item->get_first_child();
 	while (child_item) {
 		has_conflict_child |= _fix_conflicted_indeterminate_state(child_item, p_column);
 		Dictionary child_meta = child_item->get_metadata(p_column);
 		bool child_conflict = child_meta.get("is_conflict", false);
+		bool child_installed = child_meta.get("is_installed", false);
+		bool child_modified = child_meta.get("is_modified", false);
 		if (child_conflict) {
-			child_item->set_checked(p_column, false);
 			has_conflict_child = true;
+		} else
+		if (child_installed) {
+			has_installed_child = true;
+		} else
+		if (child_modified) {
+			has_modified_child = true;
 		} else {
 			bool child_checked = child_item->is_checked(p_column);
 			bool child_indeterminate = child_item->is_indeterminate(p_column);
 			all_non_conflict_checked &= (child_checked || child_indeterminate);
 			all_non_conflict_unchecked &= !child_checked;
 			has_indeterminate_child |= child_indeterminate;
+			has_new_child = true;
 		}
 		child_item = child_item->get_next();
 	}
 	if (has_indeterminate_child) {
 		p_item->set_indeterminate(p_column, true);
-	} else if (all_non_conflict_checked) {
-		p_item->set_checked(p_column, true);
-	} else if (all_non_conflict_unchecked) {
-		p_item->set_checked(p_column, false);
 	}
+
 	if (has_conflict_child) {
 		p_item->set_custom_color(p_column, get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+	} else
+	if (has_modified_child) {
+		p_item->set_custom_color(p_column, get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
+	} else
+	if (has_installed_child && !has_new_child) {
+		p_item->set_custom_color(p_column, get_theme_color(SNAME("success_color"), EditorStringName(Editor)));
 	} else {
 		p_item->clear_custom_color(p_column);
 	}
+
+	bool is_mixed = (has_new_child || has_installed_child) && (has_conflict_child || has_modified_child);
+	Dictionary meta = p_item->get_metadata(0);
+	meta["is_mixed"] = is_mixed;
+	p_item->set_metadata(0, meta);
+
 	return has_conflict_child;
 }
 
@@ -107,6 +164,8 @@ bool EditorAssetInstaller::_is_item_checked(const String &p_source_path) const {
 }
 
 void EditorAssetInstaller::open_asset(const String &p_path, bool p_autoskip_toplevel) {
+	asset_state = EditorAssetStateManager::get_singleton()->get_asset_state(asset_id);
+
 	package_path = p_path;
 	asset_files.clear();
 
@@ -254,15 +313,24 @@ void EditorAssetInstaller::_update_source_tree() {
 		String asset_path = item_meta.get("asset_path", "");
 		ERR_CONTINUE(asset_path.is_empty());
 
+		bool target_installed = false;
+
+		if (asset_state) {
+			target_installed = asset_state->file_paths.has(mapped_files[asset_path]);
+		}
+
 		bool target_exists = _update_source_item_status(ti, asset_path);
 		if (target_exists) {
 			if (first_file_conflict == nullptr) {
 				first_file_conflict = ti;
 			}
-			num_file_conflicts += 1;
+			if (!target_installed) {
+				num_file_conflicts += 1;
+			}
 		}
 
-		item_meta["is_conflict"] = target_exists;
+		item_meta["is_conflict"] = target_exists && !target_installed;
+		item_meta["is_installed"] = target_exists && target_installed;
 		ti->set_metadata(0, item_meta);
 	}
 
@@ -275,10 +343,21 @@ bool EditorAssetInstaller::_update_source_item_status(TreeItem *p_item, const St
 	String target_path = target_dir_path.path_join(mapped_files[p_path]);
 
 	bool target_exists = FileAccess::exists(target_path);
+	bool target_installed = false;
+
+	if (asset_state) {
+		target_installed = asset_state->file_paths.has(mapped_files[p_path]);
+	}
+
 	if (target_exists) {
-		p_item->set_custom_color(0, get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+		if (target_installed) {
+			p_item->set_custom_color(0, get_theme_color(SNAME("success_color"), EditorStringName(Editor)));
+			p_item->set_checked(0, true);
+		} else {
+			p_item->set_custom_color(0, get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+			p_item->set_checked(0, false);
+		}
 		p_item->set_tooltip_text(0, vformat(TTR("%s (already exists)"), target_path));
-		p_item->set_checked(0, false);
 	} else {
 		p_item->clear_custom_color(0);
 		p_item->set_tooltip_text(0, target_path);
@@ -347,6 +426,9 @@ TreeItem *EditorAssetInstaller::_create_dir_item(Tree *p_tree, TreeItem *p_paren
 		meta["asset_path"] = p_path + "/";
 		meta["is_dir"] = true;
 		meta["is_conflict"] = false;
+		meta["is_installed"] = false;
+		meta["is_unchecked"] = !ti->is_checked(0) && !ti->is_indeterminate(0);
+		meta["is_mixed"] = false;
 		ti->set_metadata(0, meta);
 	}
 
@@ -364,18 +446,28 @@ TreeItem *EditorAssetInstaller::_create_file_item(Tree *p_tree, TreeItem *p_pare
 		ti->set_cell_mode(0, TreeItem::CELL_MODE_CHECK);
 		ti->set_editable(0, true);
 
+		bool target_installed = false;
+
+		if (asset_state) {
+			target_installed = asset_state->file_paths.has(mapped_files[p_path]);
+		}
+
 		bool target_exists = _update_source_item_status(ti, p_path);
 		if (target_exists) {
 			if (first_file_conflict == nullptr) {
 				first_file_conflict = ti;
 			}
-			*r_conflicts += 1;
+			if (!target_installed) {
+				*r_conflicts += 1;
+			}
 		}
 
 		Dictionary meta;
 		meta["asset_path"] = p_path;
 		meta["is_dir"] = false;
-		meta["is_conflict"] = target_exists;
+		meta["is_conflict"] = target_exists && !target_installed;
+		meta["is_installed"] = target_exists && target_installed;
+
 		ti->set_metadata(0, meta);
 	}
 
@@ -393,7 +485,7 @@ TreeItem *EditorAssetInstaller::_create_file_item(Tree *p_tree, TreeItem *p_pare
 
 void EditorAssetInstaller::_update_conflict_status(int p_conflicts) {
 	if (p_conflicts >= 1) {
-		asset_conflicts_link->set_text(vformat(TTRN("%d file conflicts with your project and won't be installed", "%d files conflict with your project and won't be installed", p_conflicts), p_conflicts));
+		asset_conflicts_link->set_text(vformat(TTRN("%d file conflicts with your project", "%d files conflict with your project", p_conflicts), p_conflicts));
 		asset_conflicts_link->show();
 		asset_conflicts_label->hide();
 	} else {
@@ -592,7 +684,7 @@ void EditorAssetInstaller::_install_asset() {
 		}
 		installed_files.push_back(E.value);
 	}
-	
+
 	EditorAssetStateManager::get_singleton()->register_installed_asset(asset_id, asset_name, asset_version, target_dir_path, skip_toplevel, installed_files);
 }
 
